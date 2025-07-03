@@ -1,15 +1,16 @@
 # SageMaker Unified Studio Domain Deployment
 
-This repository contains comprehensive solutions for deploying SageMaker Unified Studio domains using both **CloudFormation templates** and **DataZone API** approaches. The templates and scripts are based on the official AWS templates from the [Unified Studio for Amazon SageMaker repository](https://github.com/aws/Unified-Studio-for-Amazon-Sagemaker) and have been successfully tested and deployed.
+This repository contains comprehensive solutions for deploying SageMaker Unified Studio domains using **CloudFormation templates**, **DataZone API**, and **AWS CDK** approaches. The templates and scripts are based on the official AWS templates from the [Unified Studio for Amazon SageMaker repository](https://github.com/aws/Unified-Studio-for-Amazon-Sagemaker) and have been successfully tested and deployed.
 
 ## Overview
 
-This project provides two complete approaches for creating SageMaker Unified Studio domains:
+This project provides three complete approaches for creating SageMaker Unified Studio domains:
 
 1. **CloudFormation Approach**: Infrastructure as Code with declarative templates
 2. **DataZone API Approach**: Direct API calls with Python automation
+3. **AWS CDK Approach**: Python-based Infrastructure as Code with type safety
 
-Both approaches create identical domains with the same environment blueprints and configurations.
+All approaches create identical domains with the same environment blueprints and configurations.
 
 ## Architecture
 
@@ -41,6 +42,11 @@ The deployment creates the following components:
 - **Domain Name**: `Corporate-API-Test`
 - **Portal URL**: `https://dzd_d0rnqxsgrm8ogg.sagemaker.us-west-2.on.aws`
 
+### CDK Domain (Ready to Deploy)
+- **Domain Name**: `Corporate-CDK-Test`
+- **Stack Name**: `SageMakerUnifiedStudioStack`
+- **Deployment**: Available in `/cdk` directory
+
 ## Repository Structure
 
 ```
@@ -60,6 +66,14 @@ The deployment creates the following components:
 ├── Deployment Scripts:
 ├── ├── deploy-sagemaker-unified-studio.sh            # CloudFormation deployment script
 ├── ├── create_sagemaker_domain_api.py                # Python API automation script
+├── 
+├── CDK Implementation:
+├── ├── app.py                                        # CDK application entry point
+├── ├── sagemaker_unified_studio_stack.py            # CDK stack definition
+├── ├── requirements.txt                              # Python dependencies
+├── ├── cdk.json                                      # CDK configuration
+├── ├── deploy-cdk.sh                                 # CDK deployment script
+├── └── README.md                                     # CDK documentation
 ├── 
 └── Generated Files:
     ├── domain_info.json                              # Domain information output
@@ -124,6 +138,32 @@ The deployment creates the following components:
      --manage-access-role-arn "MANAGE_ACCESS_ROLE_ARN" \
      --provisioning-role-arn "PROVISIONING_ROLE_ARN" \
      --enabled-regions "us-west-2"
+   ```
+
+### Option 3: AWS CDK Deployment
+
+1. **Using CDK Deployment Script**:
+   ```bash
+   # Navigate to CDK directory
+   cd cdk
+   
+   # Deploy the stack
+   ./deploy-cdk.sh deploy
+   ```
+
+2. **Manual CDK Deployment**:
+   ```bash
+   # Navigate to CDK directory
+   cd cdk
+   
+   # Install dependencies
+   pip3 install -r requirements.txt
+   
+   # Bootstrap CDK (first time only)
+   cdk bootstrap aws://000557565608/us-west-2 --profile bwangyu+sagemaker+unified
+   
+   # Deploy the stack
+   cdk deploy SageMakerUnifiedStudioStack --profile bwangyu+sagemaker+unified
    ```
 
 ## Configuration
@@ -211,15 +251,18 @@ The Python script generates:
 
 ## Approach Comparison
 
-| Aspect | CloudFormation | DataZone API |
-|--------|----------------|--------------|
-| **Complexity** | Higher (template syntax) | Lower (direct API calls) |
-| **Automation** | Excellent (declarative) | Good (imperative) |
-| **Error Handling** | Built-in rollback | Manual handling required |
-| **Reproducibility** | Excellent | Good |
-| **Version Control** | Excellent | Good (with scripts) |
-| **Learning Curve** | Steeper | Gentler |
-| **Flexibility** | Limited to CF resources | Full API access |
+| Aspect | CloudFormation | DataZone API | AWS CDK |
+|--------|----------------|--------------|---------|
+| **Complexity** | Higher (template syntax) | Lower (direct API calls) | Medium (Python + constructs) |
+| **Automation** | Excellent (declarative) | Good (imperative) | Excellent (declarative) |
+| **Error Handling** | Built-in rollback | Manual handling required | Built-in rollback |
+| **Reproducibility** | Excellent | Good | Excellent |
+| **Version Control** | Excellent | Good (with scripts) | Excellent |
+| **Learning Curve** | Steeper | Gentler | Medium |
+| **Flexibility** | Limited to CF resources | Full API access | High (programming logic) |
+| **Type Safety** | No | Yes (Python) | Yes (Python + constructs) |
+| **Testing** | Limited | Possible | Excellent (unit tests) |
+| **IDE Support** | Basic | Good | Excellent |
 
 ## Troubleshooting
 
