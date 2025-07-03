@@ -2,7 +2,7 @@
 
 This repository contains comprehensive solutions for deploying SageMaker Unified Studio domains using both **CloudFormation templates** and **DataZone API** approaches. The templates and scripts are based on the official AWS templates from the [Unified Studio for Amazon SageMaker repository](https://github.com/aws/Unified-Studio-for-Amazon-Sagemaker) and have been successfully tested and deployed.
 
-## 📋 Overview
+## Overview
 
 This project provides two complete approaches for creating SageMaker Unified Studio domains:
 
@@ -11,7 +11,7 @@ This project provides two complete approaches for creating SageMaker Unified Stu
 
 Both approaches create identical domains with the same environment blueprints and configurations.
 
-## 🏗️ Architecture
+## Architecture
 
 The deployment creates the following components:
 
@@ -28,7 +28,7 @@ The deployment creates the following components:
 - **Data Lake**: Data storage and cataloging capabilities
 - **Workflows**: Orchestration and automation workflows
 
-## 🎯 Successfully Deployed Domains
+## Deployed Domains
 
 ### CloudFormation Domain
 - **Domain ID**: `dzd_3is8hf193ykyc0`
@@ -41,7 +41,7 @@ The deployment creates the following components:
 - **Domain Name**: `Corporate-API-Test`
 - **Portal URL**: `https://dzd_d0rnqxsgrm8ogg.sagemaker.us-west-2.on.aws`
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 ├── README.md                                          # This documentation
@@ -66,7 +66,7 @@ The deployment creates the following components:
     └── Various intermediate templates from development
 ```
 
-## 🚀 Quick Start
+## uick Start
 
 ### Option 1: CloudFormation Deployment (Recommended)
 
@@ -126,7 +126,7 @@ The deployment creates the following components:
      --enabled-regions "us-west-2"
    ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Default Parameters (Pre-configured)
 
@@ -155,7 +155,7 @@ All templates come with working default values extracted from the existing "Corp
 | Data Lake | `d8w7c3fmbsz5cg` | Data storage and cataloging |
 | Workflows | `c9ybygnen3sukw` | Orchestration and automation |
 
-## 🛠️ Management Commands
+## Management Commands
 
 ### CloudFormation Management
 
@@ -192,7 +192,7 @@ aws datazone list-environment-blueprint-configurations --domain-identifier "DOMA
 aws datazone delete-domain --identifier "DOMAIN_ID" --region us-west-2
 ```
 
-## 📊 Deployment Outputs
+## Deployment Outputs
 
 ### CloudFormation Outputs
 After successful deployment, the CloudFormation stack provides:
@@ -209,7 +209,7 @@ The Python script generates:
 - **domain_info.json**: Complete domain information
 - **Console output**: Detailed deployment progress and results
 
-## 🔍 Approach Comparison
+## Approach Comparison
 
 | Aspect | CloudFormation | DataZone API |
 |--------|----------------|--------------|
@@ -221,7 +221,7 @@ The Python script generates:
 | **Learning Curve** | Steeper | Gentler |
 | **Flexibility** | Limited to CF resources | Full API access |
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues and Solutions
 
@@ -267,7 +267,7 @@ The Python script generates:
    aws datazone get-domain --identifier "DOMAIN_ID"
    ```
 
-## 🔄 Development Journey
+## Development Journey
 
 This project went through several iterations to achieve success:
 
@@ -291,7 +291,7 @@ This project went through several iterations to achieve success:
 - Provided both approaches with working examples
 - Documented lessons learned and best practices
 
-## 🔐 Security Considerations
+## Security Considerations
 
 ### IAM Roles and Permissions
 
@@ -321,46 +321,12 @@ This project went through several iterations to achieve success:
 - Proper access controls implemented
 - IAM Identity Center integration for SSO
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [SageMaker Unified Studio Documentation](https://docs.aws.amazon.com/sagemaker/latest/dg/unified-studio.html)
 - [AWS DataZone User Guide](https://docs.aws.amazon.com/datazone/latest/userguide/)
 - [AWS DataZone API Reference](https://docs.aws.amazon.com/datazone/latest/APIReference/)
 - [Official GitHub Repository](https://github.com/aws/Unified-Studio-for-Amazon-Sagemaker)
 - [AWS CloudFormation Documentation](https://docs.aws.amazon.com/cloudformation/)
-
-## 🤝 Contributing
-
-To contribute improvements:
-
-1. Fork this repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly with both approaches
-5. Update documentation
-6. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the original AWS repository for details.
-
-## ⚠️ Important Notes
-
-- **Cost Considerations**: Both approaches create AWS resources that incur charges
-- **Regional Availability**: Ensure SageMaker Unified Studio is available in your target region
-- **Prerequisites**: Requires proper IAM roles, VPC setup, and AWS Organizations (for resource sharing)
-- **Cleanup**: Use the delete commands to properly clean up resources when no longer needed
-- **Testing**: Both approaches have been successfully tested and deployed in us-west-2
-
-## 🎉 Success Metrics
-
-- ✅ **2 Working Domains**: Both CloudFormation and API approaches successful
-- ✅ **5 Environment Blueprints**: All major blueprints configured and operational
-- ✅ **Complete Automation**: Both deployment methods fully automated
-- ✅ **Comprehensive Documentation**: Detailed guides and comparisons provided
-- ✅ **Error Handling**: Robust error handling and troubleshooting guides
-- ✅ **Best Practices**: Lessons learned and recommendations documented
-
----
 
 For questions or issues, please refer to the AWS documentation, check the troubleshooting section, or review the detailed comparison in `API_vs_CloudFormation_Summary.md`.
