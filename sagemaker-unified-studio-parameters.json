@@ -1,0 +1,54 @@
+[
+  {
+    "ParameterKey": "DomainName",
+    "ParameterValue": "Corporate"
+  },
+  {
+    "ParameterKey": "DomainDescription",
+    "ParameterValue": "SageMaker Unified Studio domain for corporate data and ML workloads"
+  },
+  {
+    "ParameterKey": "OrganizationId",
+    "ParameterValue": "o-ur1wjxiiym"
+  },
+  {
+    "ParameterKey": "DomainExecutionRole",
+    "ParameterValue": "arn:aws:iam::000557565608:role/service-role/AmazonSageMakerDomainExecution"
+  },
+  {
+    "ParameterKey": "ServiceRole",
+    "ParameterValue": "arn:aws:iam::000557565608:role/service-role/AmazonSageMakerDomainService"
+  },
+  {
+    "ParameterKey": "AmazonSageMakerManageAccessRole",
+    "ParameterValue": "arn:aws:iam::000557565608:role/service-role/AmazonSageMakerManageAccess-us-west-2-dzd_c3mt22a3kr50wg"
+  },
+  {
+    "ParameterKey": "AmazonSageMakerProvisioningRole",
+    "ParameterValue": "arn:aws:iam::000557565608:role/service-role/AmazonSageMakerProvisioning-000557565608"
+  },
+  {
+    "ParameterKey": "DZS3Bucket",
+    "ParameterValue": "amazon-sagemaker-000557565608-us-west-2-76069271d5a4"
+  },
+  {
+    "ParameterKey": "SageMakerSubnets",
+    "ParameterValue": "subnet-0f126720addaa10a3,subnet-01bc87ea3b8c1f394,subnet-0e2725180c8108193"
+  },
+  {
+    "ParameterKey": "AmazonSageMakerVpcId",
+    "ParameterValue": "vpc-07ad87ee29c085136"
+  },
+  {
+    "ParameterKey": "SSOUserAssignment",
+    "ParameterValue": "MANUAL"
+  },
+  {
+    "ParameterKey": "IDCInstanceArn",
+    "ParameterValue": "arn:aws:sso:::instance/ssoins-790730fbc9d864c7"
+  },
+  {
+    "ParameterKey": "EnableResourceSharing",
+    "ParameterValue": "true"
+  }
+]

@@ -1,0 +1,318 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SageMaker Unified Studio Domain - Comprehensive version with domain and multiple blueprints'
+
+Parameters:
+  DomainName:
+    Type: String
+    Description: Name of the SageMaker Unified Studio domain
+    Default: "Corporate-Test"
+    MinLength: 1
+    MaxLength: 64
+    AllowedPattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]$'
+    ConstraintDescription: Domain name must be 1-64 characters, start and end with alphanumeric, and contain only alphanumeric characters and hyphens
+
+  DomainDescription:
+    Type: String
+    Description: Description for the SageMaker Unified Studio domain
+    Default: "SageMaker Unified Studio domain for testing CloudFormation deployment"
+    MaxLength: 2048
+
+  OrganizationId:
+    Type: String
+    Description: AWS Organizations ID (required for resource sharing)
+    Default: "o-ur1wjxiiym"
+    AllowedPattern: '^o-[a-z0-9]{10,32}$'
+    ConstraintDescription: Must be a valid AWS Organizations ID (e.g., o-example123456)
+
+  DomainExecutionRole:
+    Type: String
+    Description: IAM role ARN for domain execution
+    Default: "arn:aws:iam::000557565608:role/service-role/AmazonSageMakerDomainExecution"
+    AllowedPattern: '^arn:aws:iam::[0-9]{12}:role/.*$'
+    ConstraintDescription: Must be a valid IAM role ARN
+
+  ServiceRole:
+    Type: String
+    Description: IAM service role ARN for the domain
+    Default: "arn:aws:iam::000557565608:role/service-role/AmazonSageMakerDomainService"
+    AllowedPattern: '^arn:aws:iam::[0-9]{12}:role/.*$'
+    ConstraintDescription: Must be a valid IAM role ARN
+
+  AmazonSageMakerManageAccessRole:
+    Type: String
+    Description: IAM role ARN to manage access to SageMaker environments
+    Default: "arn:aws:iam::000557565608:role/service-role/AmazonSageMakerManageAccess-us-west-2-dzd_c3mt22a3kr50wg"
+    AllowedPattern: '^arn:aws:iam::[0-9]{12}:role/.*$'
+    ConstraintDescription: Must be a valid IAM role ARN
+
+  AmazonSageMakerProvisioningRole:
+    Type: String
+    Description: IAM role ARN to provision SageMaker environments
+    Default: "arn:aws:iam::000557565608:role/service-role/AmazonSageMakerProvisioning-000557565608"
+    AllowedPattern: '^arn:aws:iam::[0-9]{12}:role/.*$'
+    ConstraintDescription: Must be a valid IAM role ARN
+
+  SSOUserAssignment:
+    Type: String
+    Description: Single Sign-On user assignment method
+    Default: "MANUAL"
+    AllowedValues:
+      - "AUTOMATIC"
+      - "MANUAL"
+
+  IDCInstanceArn:
+    Type: String
+    Description: AWS IAM Identity Center instance ARN (optional)
+    Default: "arn:aws:sso:::instance/ssoins-790730fbc9d864c7"
+    AllowedPattern: '^(arn:aws:sso:::instance/ssoins-[a-z0-9]{16})?$'
+    ConstraintDescription: Must be a valid IAM Identity Center instance ARN or empty
+
+  EnableResourceSharing:
+    Type: String
+    Description: Enable AWS RAM resource sharing across organization
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+
+Conditions:
+  HasIDCInstance: !Not [!Equals [!Ref IDCInstanceArn, ""]]
+  EnableSharing: !Equals [!Ref EnableResourceSharing, "true"]
+
+Resources:
+  # Main SageMaker Unified Studio Domain
+  SageMakerUnifiedStudioDomain:
+    Type: AWS::DataZone::Domain
+    Properties:
+      Name: !Ref DomainName
+      Description: !Ref DomainDescription
+      DomainExecutionRole: !Ref DomainExecutionRole
+      DomainVersion: "V2"
+      ServiceRole: !Ref ServiceRole
+      SingleSignOn:
+        Type: "IAM_IDC"
+        UserAssignment: !Ref SSOUserAssignment
+        IdcInstanceArn: !If
+          - HasIDCInstance
+          - !Ref IDCInstanceArn
+          - !Ref AWS::NoValue
+      Tags:
+        - Key: "Environment"
+          Value: "Test"
+        - Key: "Purpose"
+          Value: "SageMaker Unified Studio"
+        - Key: "CreatedBy"
+          Value: "CloudFormation"
+
+  # Blueprint Configurations with correct identifiers
+  # Lakehouse Catalog Blueprint
+  LakehouseCatalogBlueprint:
+    Type: AWS::DataZone::EnvironmentBlueprintConfiguration
+    Properties:
+      DomainIdentifier: !Ref SageMakerUnifiedStudioDomain
+      EnvironmentBlueprintIdentifier: "LakehouseCatalog"
+      EnabledRegions:
+        - !Ref AWS::Region
+      ManageAccessRoleArn: !Ref AmazonSageMakerManageAccessRole
+      ProvisioningRoleArn: !Ref AmazonSageMakerProvisioningRole
+      RegionalParameters:
+        - Region: !Ref AWS::Region
+          Parameters: {}
+
+  # ML Experiments Blueprint
+  MLExperimentsBlueprint:
+    Type: AWS::DataZone::EnvironmentBlueprintConfiguration
+    Properties:
+      DomainIdentifier: !Ref SageMakerUnifiedStudioDomain
+      EnvironmentBlueprintIdentifier: "MLExperiments"
+      EnabledRegions:
+        - !Ref AWS::Region
+      ManageAccessRoleArn: !Ref AmazonSageMakerManageAccessRole
+      ProvisioningRoleArn: !Ref AmazonSageMakerProvisioningRole
+      RegionalParameters:
+        - Region: !Ref AWS::Region
+          Parameters: {}
+
+  # Tooling Blueprint
+  ToolingBlueprint:
+    Type: AWS::DataZone::EnvironmentBlueprintConfiguration
+    Properties:
+      DomainIdentifier: !Ref SageMakerUnifiedStudioDomain
+      EnvironmentBlueprintIdentifier: "Tooling"
+      EnabledRegions:
+        - !Ref AWS::Region
+      ManageAccessRoleArn: !Ref AmazonSageMakerManageAccessRole
+      ProvisioningRoleArn: !Ref AmazonSageMakerProvisioningRole
+      RegionalParameters:
+        - Region: !Ref AWS::Region
+          Parameters: {}
+
+  # Data Lake Blueprint
+  DataLakeBlueprint:
+    Type: AWS::DataZone::EnvironmentBlueprintConfiguration
+    Properties:
+      DomainIdentifier: !Ref SageMakerUnifiedStudioDomain
+      EnvironmentBlueprintIdentifier: "DataLake"
+      EnabledRegions:
+        - !Ref AWS::Region
+      ManageAccessRoleArn: !Ref AmazonSageMakerManageAccessRole
+      ProvisioningRoleArn: !Ref AmazonSageMakerProvisioningRole
+      RegionalParameters:
+        - Region: !Ref AWS::Region
+          Parameters: {}
+
+  # Workflows Blueprint
+  WorkflowsBlueprint:
+    Type: AWS::DataZone::EnvironmentBlueprintConfiguration
+    Properties:
+      DomainIdentifier: !Ref SageMakerUnifiedStudioDomain
+      EnvironmentBlueprintIdentifier: "Workflows"
+      EnabledRegions:
+        - !Ref AWS::Region
+      ManageAccessRoleArn: !Ref AmazonSageMakerManageAccessRole
+      ProvisioningRoleArn: !Ref AmazonSageMakerProvisioningRole
+      RegionalParameters:
+        - Region: !Ref AWS::Region
+          Parameters: {}
+
+  # Amazon Bedrock Blueprints
+  BedrockGuardrailBlueprint:
+    Type: AWS::DataZone::EnvironmentBlueprintConfiguration
+    Properties:
+      DomainIdentifier: !Ref SageMakerUnifiedStudioDomain
+      EnvironmentBlueprintIdentifier: "AmazonBedrockGuardrail"
+      EnabledRegions:
+        - !Ref AWS::Region
+      ManageAccessRoleArn: !Ref AmazonSageMakerManageAccessRole
+      ProvisioningRoleArn: !Ref AmazonSageMakerProvisioningRole
+      RegionalParameters:
+        - Region: !Ref AWS::Region
+          Parameters: {}
+
+  BedrockPromptBlueprint:
+    Type: AWS::DataZone::EnvironmentBlueprintConfiguration
+    Properties:
+      DomainIdentifier: !Ref SageMakerUnifiedStudioDomain
+      EnvironmentBlueprintIdentifier: "AmazonBedrockPrompt"
+      EnabledRegions:
+        - !Ref AWS::Region
+      ManageAccessRoleArn: !Ref AmazonSageMakerManageAccessRole
+      ProvisioningRoleArn: !Ref AmazonSageMakerProvisioningRole
+      RegionalParameters:
+        - Region: !Ref AWS::Region
+          Parameters: {}
+
+  BedrockKnowledgeBaseBlueprint:
+    Type: AWS::DataZone::EnvironmentBlueprintConfiguration
+    Properties:
+      DomainIdentifier: !Ref SageMakerUnifiedStudioDomain
+      EnvironmentBlueprintIdentifier: "AmazonBedrockKnowledgeBase"
+      EnabledRegions:
+        - !Ref AWS::Region
+      ManageAccessRoleArn: !Ref AmazonSageMakerManageAccessRole
+      ProvisioningRoleArn: !Ref AmazonSageMakerProvisioningRole
+      RegionalParameters:
+        - Region: !Ref AWS::Region
+          Parameters: {}
+
+  # AWS RAM Resource Share (if enabled)
+  DomainResourceShare:
+    Type: AWS::RAM::ResourceShare
+    Condition: EnableSharing
+    Properties:
+      Name: !Sub "${DomainName}-domain-share"
+      ResourceArns:
+        - !GetAtt SageMakerUnifiedStudioDomain.Arn
+      Principals:
+        - !Ref OrganizationId
+      AllowExternalPrincipals: false
+      Tags:
+        - Key: "Purpose"
+          Value: "SageMaker Unified Studio Domain Sharing"
+
+Outputs:
+  DomainId:
+    Description: "SageMaker Unified Studio Domain ID"
+    Value: !Ref SageMakerUnifiedStudioDomain
+    Export:
+      Name: !Sub "${AWS::StackName}-DomainId"
+
+  DomainArn:
+    Description: "SageMaker Unified Studio Domain ARN"
+    Value: !GetAtt SageMakerUnifiedStudioDomain.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-DomainArn"
+
+  DomainName:
+    Description: "SageMaker Unified Studio Domain Name"
+    Value: !Ref DomainName
+    Export:
+      Name: !Sub "${AWS::StackName}-DomainName"
+
+  PortalUrl:
+    Description: "SageMaker Unified Studio Portal URL"
+    Value: !GetAtt SageMakerUnifiedStudioDomain.PortalUrl
+    Export:
+      Name: !Sub "${AWS::StackName}-PortalUrl"
+
+  RootDomainUnitId:
+    Description: "Root Domain Unit ID"
+    Value: !GetAtt SageMakerUnifiedStudioDomain.RootDomainUnitId
+    Export:
+      Name: !Sub "${AWS::StackName}-RootDomainUnitId"
+
+  # Blueprint Outputs
+  LakehouseCatalogBlueprintId:
+    Description: "Lakehouse Catalog Blueprint Configuration ID"
+    Value: !Ref LakehouseCatalogBlueprint
+    Export:
+      Name: !Sub "${AWS::StackName}-LakehouseCatalogBlueprintId"
+
+  MLExperimentsBlueprintId:
+    Description: "ML Experiments Blueprint Configuration ID"
+    Value: !Ref MLExperimentsBlueprint
+    Export:
+      Name: !Sub "${AWS::StackName}-MLExperimentsBlueprintId"
+
+  ToolingBlueprintId:
+    Description: "Tooling Blueprint Configuration ID"
+    Value: !Ref ToolingBlueprint
+    Export:
+      Name: !Sub "${AWS::StackName}-ToolingBlueprintId"
+
+  DataLakeBlueprintId:
+    Description: "Data Lake Blueprint Configuration ID"
+    Value: !Ref DataLakeBlueprint
+    Export:
+      Name: !Sub "${AWS::StackName}-DataLakeBlueprintId"
+
+  WorkflowsBlueprintId:
+    Description: "Workflows Blueprint Configuration ID"
+    Value: !Ref WorkflowsBlueprint
+    Export:
+      Name: !Sub "${AWS::StackName}-WorkflowsBlueprintId"
+
+  BedrockGuardrailBlueprintId:
+    Description: "Bedrock Guardrail Blueprint Configuration ID"
+    Value: !Ref BedrockGuardrailBlueprint
+    Export:
+      Name: !Sub "${AWS::StackName}-BedrockGuardrailBlueprintId"
+
+  BedrockPromptBlueprintId:
+    Description: "Bedrock Prompt Blueprint Configuration ID"
+    Value: !Ref BedrockPromptBlueprint
+    Export:
+      Name: !Sub "${AWS::StackName}-BedrockPromptBlueprintId"
+
+  BedrockKnowledgeBaseBlueprintId:
+    Description: "Bedrock Knowledge Base Blueprint Configuration ID"
+    Value: !Ref BedrockKnowledgeBaseBlueprint
+    Export:
+      Name: !Sub "${AWS::StackName}-BedrockKnowledgeBaseBlueprintId"
+
+  ResourceShareArn:
+    Condition: EnableSharing
+    Description: "AWS RAM Resource Share ARN"
+    Value: !GetAtt DomainResourceShare.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-ResourceShareArn"

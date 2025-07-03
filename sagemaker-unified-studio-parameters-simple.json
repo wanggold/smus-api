@@ -1,0 +1,10 @@
+[
+  {
+    "ParameterKey": "DomainName",
+    "ParameterValue": "Corporate-Test"
+  },
+  {
+    "ParameterKey": "DomainDescription",
+    "ParameterValue": "SageMaker Unified Studio domain for testing CloudFormation deployment"
+  }
+]
